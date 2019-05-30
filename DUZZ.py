@@ -4,6 +4,7 @@ from SQLManager import SQLManager
 class duzz(SQLManager):
 
       def __init__(self, lista):
+            super().__init__()
             self.conn = None
             self.cursor = None
             self.lista = lista
@@ -60,3 +61,13 @@ class duzz(SQLManager):
             else:
                   print("Tabela Criada")
             self.final_sem_retorno()
+
+      def subir_dado(self, dia, hora, potencia):
+            try:
+                  print(dia, hora, potencia)
+                  super().query_insert(table = dia, columns = hora, potencia = potencia)
+            except:
+                  print("Não Foi Possível Subir Os Dados Ao BD!")
+            else:
+                  print(f"Dados do dia {dia} - hora {hora} Salvos com Sucesso")
+            self.final_sem_retorno()      

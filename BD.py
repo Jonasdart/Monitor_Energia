@@ -3,11 +3,15 @@ from SQLManager import SQLManager
 import time
 from datetime import datetime
 from DUZZ import duzz
+from organiza import ORG
+import os
+import shutil
+
 
 class BD(SQLManager):
-      dados = open('dados.txt', 'r')
       
       def __init__(self):
+            super().__init__()
             #CRIANDO CONTROLE DO BD
             self.conn = None
             self.crusor = None
@@ -48,5 +52,34 @@ class BD(SQLManager):
                   self.conectado = True
                   self.cursor = self.conn.cursor()
 
+      def horario(self):
+            #AQUI PEGAMOS A HORA E DATA ATUAL
+            data = datetime.now()
+            #AQUI RETORNAMOS A HORA ATUAL EM INTEIRO
+            return int(data.strftime('%H'))
+
+      def data(self):
+            #AQUI PEGAMOS A HORA E DATA ATUAL
+            data = datetime.now()
+            #AQUI RETORNAMOS UMA STRING COM A DATA ATUAL
+            return data.strftime('%Y-%m-%d')
+
+      def first(self, hora):
+            if hora is 3:
+                  duzz(self.cred).criar_table(self.date)
       
-nome = BD().horario()
+      def envia(self):
+            hora = self.horario()
+            ORG().organiza(hora)
+            self.dados = open('backup/dados.txt', 'r')
+            itens = self.dados.readline().split("-")
+            self.potencia = float(itens[1])
+            self.date = self.data()
+            #self.first(hora)
+            duzz(self.cred).subir_dado(self.date, itens[0], self.potencia)
+            
+            if hora is 23:
+                  self.date = self.data()
+                  self.dados.close()
+                  ORG().backup(data)
+                  time.sleep(60)

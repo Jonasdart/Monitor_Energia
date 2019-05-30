@@ -157,4 +157,5 @@ class SQLManager (object):
     def create_table(self, name, bd = '`dados_brutos`'):
         self.query = "CREATE TABLE "
         self.query += f"{bd}.`{name}`"
-        self.query += "( `1` FLOAT NOT NULL ) ENGINE = InnoDB;"
+        self.query += "( `0` FLOAT NOT NULL , `1` FLOAT NOT NULL , `2` FLOAT NOT NULL , `3` FLOAT NOT NULL , `4` FLOAT NOT NULL , `5` FLOAT NOT NULL , `6` FLOAT NOT NULL , `7` FLOAT NOT NULL , `8` FLOAT NOT NULL , `9` FLOAT NOT NULL , `10` FLOAT NOT NULL , `11` FLOAT NOT NULL , `12` FLOAT NOT NULL , `13` FLOAT NOT NULL , `14` FLOAT NOT NULL , `15` FLOAT NOT NULL , `16` FLOAT NOT NULL , `17` FLOAT NOT NULL , `18` FLOAT NOT NULL , `19` FLOAT NOT NULL , `20` FLOAT NOT NULL , `21` FLOAT NOT NULL , `22` FLOAT NOT NULL , `23` FLOAT NOT NULL ) ENGINE = InnoDB;"
+

@@ -2,12 +2,12 @@ import time
 from datetime import datetime
 import RPi.GPIO as GPIO
 import serial
-import MySQLdb as mdb
-from SQLManager import SQLManager
+from organiza import ORG
+from BD import BD
 
 while True:
       #ARQUIVO DOS DADOS BRUTOS
-      brutos = open('brutos.txt', 'a')
+      brutos = open('backup/brutos.txt', 'a')
 
       #AQUI PEGAMOS A HORA ATUAL
       data = datetime.now()
@@ -15,9 +15,10 @@ while True:
 
 
       #Configura a serial e a velocidade de transmissao
-      if minutos is 50:
+      if minutos is 59:
             try:
                   UNO = serial.Serial("/dev/ttyAMA0", 115200)
+                  UNO.write(0)
                   UNO.open()
             except:
                   print("Não Foi Possível Estabelecer Comunicação Com o A_UNO!")
@@ -33,6 +34,8 @@ while True:
                               brutos.write(kwh)
                               brutos.close()
                               print("Dados Salvos Com Sucesso!")
+                              UNO.write(1)
+                              BD().envia()
                               time.sleep(3600)
                               break
       else:
