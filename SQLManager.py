@@ -3,6 +3,7 @@ __author__ = 'pedro'
 
 class SQLManager (object):
     def __init__(self):
+        self.autenticado = bool
         """
         :return:
         """
@@ -154,8 +155,28 @@ class SQLManager (object):
         """
         self.query = query
 
-    def create_table(self, name, bd = '`dados_brutos`'):
+    def mostrar_tabelas(self):
+        self.query = "SHOW TABLES"
+
+    def deletar (self, tabela, coluna):
+        self.query = f"DELETE FROM `{tabela}` "
+        self.query += f"WHERE {tabela} = 0"
+
+    def selecionar (self, tabela, coluna = "*"):
+        if coluna is not "*":
+            self.query = f"SELECT `{coluna}` FROM `{tabela}`"
+        else:
+            self.query = f"SELECT {coluna} FROM `{tabela}`"
+
+    def att_valor (self, tabela, coluna, valor):
+        self.query = f"UPDATE `{tabela}` SET `{coluna}` = ({valor})"
+        self.query += f"WHERE {coluna} = 0"
+
+    def insere(self, tabela, hora, consumo):
+        self.query = f"INSERT INTO`{tabela}` (`{hora}`) VALUES ('{consumo}')"
+        
+    def create_table(self, name, bd = '`Consumo`'):
         self.query = "CREATE TABLE "
         self.query += f"{bd}.`{name}`"
-        self.query += "( `0` FLOAT NOT NULL , `1` FLOAT NOT NULL , `2` FLOAT NOT NULL , `3` FLOAT NOT NULL , `4` FLOAT NOT NULL , `5` FLOAT NOT NULL , `6` FLOAT NOT NULL , `7` FLOAT NOT NULL , `8` FLOAT NOT NULL , `9` FLOAT NOT NULL , `10` FLOAT NOT NULL , `11` FLOAT NOT NULL , `12` FLOAT NOT NULL , `13` FLOAT NOT NULL , `14` FLOAT NOT NULL , `15` FLOAT NOT NULL , `16` FLOAT NOT NULL , `17` FLOAT NOT NULL , `18` FLOAT NOT NULL , `19` FLOAT NOT NULL , `20` FLOAT NOT NULL , `21` FLOAT NOT NULL , `22` FLOAT NOT NULL , `23` FLOAT NOT NULL ) ENGINE = InnoDB;"
+        self.query += "( `0` FLOAT NOT NULL , `1` FLOAT NOT NULL , `2` FLOAT NOT NULL , `3` FLOAT  NOT NULL , `4` FLOAT  NOT NULL , `5` FLOAT  NOT NULL , `6` FLOAT  NOT NULL , `7` FLOAT  NOT NULL , `8` FLOAT  NOT NULL , `9` FLOAT  NOT NULL , `10` FLOAT  NOT NULL , `11` FLOAT  NOT NULL , `12` FLOAT  NOT NULL , `13` FLOAT  NOT NULL , `14` FLOAT  NOT NULL , `15` FLOAT  NOT NULL , `16` FLOAT  NOT NULL , `17` FLOAT  NOT NULL , `18` FLOAT  NOT NULL , `19` FLOAT  NOT NULL , `20` FLOAT  NOT NULL , `21` FLOAT  NOT NULL , `22` FLOAT NOT NULL , `23` FLOAT NOT NULL ) ENGINE = InnoDB;"
 

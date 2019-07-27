@@ -13,42 +13,21 @@ class BD(SQLManager):
       def __init__(self):
             super().__init__()
             #CRIANDO CONTROLE DO BD
-            self.conn = None
-            self.crusor = None
-            self.conectado = False
             
-            #PEGANDO DADOS PARA AUTENTICAR O BD
-            while True:
-                  self.cred = ['localhost']
-                  if not self.conectado:
-                        self.cred.append(input("Informe o Usuario: "))
-                        self.cred.append(input("Digite a Senha: "))
-                        self.cred.append("dados_brutos")
-                        try:
-                              #CHAMANDO A FUNÇÃO DE LOGIN
-                              self.conecta(self.cred)
-                        except:
-                              #CASO NAO CONECTE SOLICITAR OS DADOS NOVAMENTE
-                              print("DADOS NAO CONFEREM")
-                              self.cred.clear()
-                        else:
-                              #CASO CONECTE SAIR DA REPETIÇÃO E SEGUIR EXECUTANDO
-                              if self.conectado is True:
-                                    break
-                  else:
-                        break
+            self.conn = None
+            self.cursor = None
+            self.conectado = False
 
       # FUNÇÃO PARA FAZER LOGIN NO BANCO DE DADOS
-      def conecta(self, lista):
-            self.lista = lista
-            print(self.lista)
+      def conecta(self, cred):
+            self.cred = cred
             try:
-                  self.conn = mdb.connect(self.lista[0], self.lista[1], self.lista[2], self.lista[3])
+                  self.conn = mdb.connect(self.cred[0], self.cred[1], self.cred[2], self.cred[3])
             except:
-                  print("NAO CONECTOU")
                   self.conectado = False
+                  raise exception("Não Foi Possível Conectar!")
             else:
-                  print("Conectado com Sucesso!")
+                  print("\t\t\tConectado com Sucesso!")
                   self.conectado = True
                   self.cursor = self.conn.cursor()
 
@@ -56,7 +35,8 @@ class BD(SQLManager):
             #AQUI PEGAMOS A HORA E DATA ATUAL
             data = datetime.now()
             #AQUI RETORNAMOS A HORA ATUAL EM INTEIRO
-            return int(data.strftime('%H'))
+            hora = [int(data.strftime('%H')), int(data.strftime('%M'))]
+            return hora
 
       def data(self):
             #AQUI PEGAMOS A HORA E DATA ATUAL
@@ -64,22 +44,36 @@ class BD(SQLManager):
             #AQUI RETORNAMOS UMA STRING COM A DATA ATUAL
             return data.strftime('%Y-%m-%d')
 
-      def first(self, hora):
-            if hora is 3:
+      def first(self):
+            dias = duzz(self.cred).tabelas()
+            cond = False
+            for i in range(len(dias)):
+                  for c in range(len(dias[i])):
+                        if self.date in dias[i][c]:
+                              cond = True
+            if not cond:
                   duzz(self.cred).criar_table(self.date)
       
-      def envia(self):
-            hora = self.horario()
-            ORG().organiza(hora)
-            self.dados = open('backup/dados.txt', 'r')
-            itens = self.dados.readline().split("-")
-            self.potencia = float(itens[1])
+      def envia(self, cred):
+                        
+            #PEGANDO A AUTENTICAÇÃO DO BD
+            self.cred = cred
+            #PEGANDO A HORA
+            horario = self.horario()
+            #ORGANIZANDO O TXT
+            ORG().organiza(horario)
+            #PEGANDO DADOS ORGANIZADOS
+            dados = ORG().organiza_BD()
+            #SALVANDO O VALOR DO CONSUMO
+            self.potencia = float(dados[1])
+            self.hora = dados[0]
+            #SALVANDO O DIA AO QUAL FOI FEITO O CONSUMO
             self.date = self.data()
-            #self.first(hora)
-            duzz(self.cred).subir_dado(self.date, itens[0], self.potencia)
-            
-            if hora is 23:
-                  self.date = self.data()
-                  self.dados.close()
-                  ORG().backup(data)
-                  time.sleep(60)
+            #FAZENDO BACKUP DO ARQUIVO COM OS DADOS
+            ORG().backup(self.date, horario[0])  
+
+            #SUBINDO DADOS AO BANCO DE DADOS
+            self.first()
+            duzz(self.cred).subir_dado(dia = self.date, hora =  self.hora, potencia = self.potencia) #Subimos os dados
+            os.remove("backup/dados.txt")
+      

@@ -11,7 +11,7 @@ class duzz(SQLManager):
             try:
                   self.conn = mdb.connect(self.lista[0], self.lista[1], self.lista[2], self.lista[3])
             except:
-                  raise Exception("Algo de Errado Não Esta Certo!")
+                  raise Exception("Não Foi Possível Acessar o Banco de Dados!")
             else:
                   conectado = True
                   self.cursor = self.conn.cursor()
@@ -32,6 +32,25 @@ class duzz(SQLManager):
             # Retornando a lista com os nomes das colunas
             return [r[0] for r in result]
 
+      def tabelas(self):
+            try:
+                  super().mostrar_tabelas()
+            except:
+                  print("Não Foi Possível Fazer Solicitação!")
+            else:
+                  tabelas = self.final_com_retorno()
+                  return tabelas
+
+      def buscar_dados(self, tabela, coluna):
+            try:
+                  super().selecionar(tabela = tabela, coluna = coluna)
+            except:
+                  print("Não Foi Possivel Solicitar Dados ao BD!")
+            else:
+                  dados = self.final_com_retorno()
+                  
+                  return dados
+
     #FUNÇÃO PARA SALVAR DADOS NO BD
             
       def final_sem_retorno(self):
@@ -41,7 +60,6 @@ class duzz(SQLManager):
                   raise Exception("Não Foi Possível Salvar Dados no Banco de Dados!")
             else:
                   self.conn.commit()
-                  print("Dados Salvos com Sucesso!")
 
       #FUNÇÃO PARA LER DADOS DO BD
 
@@ -57,17 +75,36 @@ class duzz(SQLManager):
             try:
                   super().create_table(name = dia)
             except:
-                  print("NAO FOI POSSIVEL CRIAR A TABELA")
+                  print(f"NAO FOI POSSIVEL CRIAR A TABELA {dia}")
             else:
-                  print("Tabela Criada")
-            self.final_sem_retorno()
+                  self.final_sem_retorno()
 
       def subir_dado(self, dia, hora, potencia):
+            """para atualizar e retirar o excesso de linhas do BD, ultimo comentario"""      
+            #SE NMR DE DADOS INSERIDOS FOREM MENOR QUE A QUANTIDADE DA HORA ATUAL
             try:
-                  print(dia, hora, potencia)
-                  super().query_insert(table = dia, columns = hora, potencia = potencia)
+                  super().insere(tabela = dia, hora = hora, consumo = potencia)
             except:
-                  print("Não Foi Possível Subir Os Dados Ao BD!")
+                  print("\tNão Foi Possível Subir Os Dados Ao BD!\n")
             else:
-                  print(f"Dados do dia {dia} - hora {hora} Salvos com Sucesso")
-            self.final_sem_retorno()      
+                  self.final_sem_retorno()
+                  print(f"\n\tDados do dia {dia} - hora {hora} Salvos com Sucesso\n")
+                  """else:
+                        try:
+                              super().deletar(tabela = dia, coluna = hora)
+                        except:
+                              print("\tNão Foi Possível Apagar Os Dados Do BD!")
+                        else:
+                              print(f"\tDados irrelevantes do dia {dia} - hora {hora} Apagados com Sucesso")
+                              cond = 1
+                              self.final_sem_retorno()  
+                  """
+      def verifica(self, dia, hora):
+            try:
+                  super().selecionar(tabela = dia, coluna = hora)
+            except:
+                  print("Não Foi Possível Verificar a Quantidade de Dados Alocados")
+            else:
+                  quantidade = self.final_com_retorno()
+                  return len(quantidade)
+            
